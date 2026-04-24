@@ -32,7 +32,7 @@ export default function FloatingHearts({ count }: FloatingHeartsProps) {
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 20 }}>
       {items.map((item) => (
         <motion.div
           key={item.id}

@@ -40,7 +40,7 @@ export default function Sparkles({ count }: SparklesProps) {
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 20 }}>
       {sparkles.map((s) => (
         <motion.div
           key={s.id}

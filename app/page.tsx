@@ -39,7 +39,6 @@ export default function Home() {
 
   const handleAccept = async () => {
     const ts = Date.now();
-    // Optimistic UI — transition immediately, write in background
     setStartTime(ts);
     setScreen('accepted');
     try {
@@ -49,56 +48,37 @@ export default function Home() {
         body: JSON.stringify({ accepted: true, timestamp: ts }),
       });
     } catch {
-      // non-fatal — state will persist on next successful visit
+      // non-fatal
     }
   };
 
   return (
-    <main className="relative w-full min-h-screen overflow-hidden flex items-center justify-center">
-      {/* ── Liquid morphing blob background ── */}
-      <div className="fixed inset-0 -z-10">
+    <main className="relative w-full min-h-screen overflow-x-hidden" suppressHydrationWarning>
+      {/* ── Fixed background ── */}
+      <div className="fixed inset-0 -z-10" suppressHydrationWarning>
         <div className="absolute inset-0" style={{
           background: 'linear-gradient(135deg, #FFF0F5 0%, #FFE8F4 20%, #FFF5EC 40%, #FFF0FA 60%, #FFF8EC 80%, #FFF0F5 100%)',
         }} />
-
-        {/* Blob 1 — strawberry pink */}
         <div
+          suppressHydrationWarning
           className="absolute -top-[10%] -left-[8%] w-[48vw] h-[48vw] opacity-45 blur-[55px]"
-          style={{
-            background: 'radial-gradient(circle at 40% 40%, #FFBDCA, #FF9FAE)',
-            animation: 'blob1-float 13s ease-in-out infinite',
-            willChange: 'transform',
-          }}
+          style={{ background: 'radial-gradient(circle at 40% 40%, #FFBDCA, #FF9FAE)', animation: 'blob1-float 13s ease-in-out infinite', willChange: 'transform' }}
         />
-        {/* Blob 2 — peach/mango */}
         <div
+          suppressHydrationWarning
           className="absolute -top-[5%] -right-[8%] w-[52vw] h-[52vw] opacity-40 blur-[55px]"
-          style={{
-            background: 'radial-gradient(circle at 60% 40%, #FFD4A0, #FFBD7A)',
-            animation: 'blob2-float 17s ease-in-out 2s infinite',
-            willChange: 'transform',
-          }}
+          style={{ background: 'radial-gradient(circle at 60% 40%, #FFD4A0, #FFBD7A)', animation: 'blob2-float 17s ease-in-out 2s infinite', willChange: 'transform' }}
         />
-        {/* Blob 3 — lavender/blueberry */}
         <div
+          suppressHydrationWarning
           className="absolute -bottom-[12%] left-[15%] w-[58vw] h-[45vw] opacity-30 blur-[62px]"
-          style={{
-            background: 'radial-gradient(circle at 50% 60%, #DDD6FE, #C084FC)',
-            animation: 'blob3-float 19s ease-in-out 4s infinite',
-            willChange: 'transform',
-          }}
+          style={{ background: 'radial-gradient(circle at 50% 60%, #DDD6FE, #C084FC)', animation: 'blob3-float 19s ease-in-out 4s infinite', willChange: 'transform' }}
         />
-        {/* Blob 4 — cherry rose */}
         <div
+          suppressHydrationWarning
           className="absolute bottom-[8%] -right-[6%] w-[38vw] h-[42vw] opacity-35 blur-[48px]"
-          style={{
-            background: 'radial-gradient(circle at 40% 50%, #FECDD3, #FDA4AF)',
-            animation: 'blob4-float 15s ease-in-out 6s infinite',
-            willChange: 'transform',
-          }}
+          style={{ background: 'radial-gradient(circle at 40% 50%, #FECDD3, #FDA4AF)', animation: 'blob4-float 15s ease-in-out 6s infinite', willChange: 'transform' }}
         />
-
-        {/* Rising bubbles */}
         {BUBBLE_CONFIGS.map((b, i) => (
           <motion.div
             key={i}
@@ -111,36 +91,38 @@ export default function Home() {
         ))}
       </div>
 
+      {/* ── Floating particles — z-20 so they drift over the card ── */}
       <FloatingHearts count={18} />
       <Sparkles count={28} />
       {screen === 'accepted' && !loading && <FloatingPhotos />}
 
-      {/* ── Loading pulse ── */}
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: [0.9, 1.1, 0.9] }}
-            exit={{ opacity: 0, scale: 0.7 }}
-            transition={{ scale: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } }}
-            className="text-5xl select-none"
-          >
-            💖
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── Main screens ── */}
-      {!loading && (
-        <AnimatePresence mode="wait">
-          {screen === 'entry' ? (
-            <EntryScreen key="entry" onAccept={handleAccept} />
-          ) : (
-            <AcceptanceScreen key="accepted" startTime={startTime!} />
+      {/* ── Centred content column ── */}
+      <div className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center py-8">
+        <AnimatePresence>
+          {loading && (
+            <motion.div
+              key="loader"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: [0.9, 1.1, 0.9] }}
+              exit={{ opacity: 0, scale: 0.7 }}
+              transition={{ scale: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } }}
+              className="text-5xl select-none"
+            >
+              💖
+            </motion.div>
           )}
         </AnimatePresence>
-      )}
+
+        {!loading && (
+          <AnimatePresence mode="wait">
+            {screen === 'entry' ? (
+              <EntryScreen key="entry" onAccept={handleAccept} />
+            ) : (
+              <AcceptanceScreen key="accepted" startTime={startTime!} />
+            )}
+          </AnimatePresence>
+        )}
+      </div>
     </main>
   );
 }
