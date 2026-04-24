@@ -42,12 +42,12 @@ interface DecorItem {
 const DECOR: DecorItem[] = [
   { emoji: '🍓', top: '-5%', left: '10%', delay: 0, dur: 4 },
   { emoji: '💖', top: '6%', right: '4%', delay: 0.4, dur: 5 },
-  { emoji: '🍑', bottom: '20%', left: '0%', delay: 0.9, dur: 4.5 },
+  { emoji: '🍑', bottom: '20%', left: '1%', delay: 0.9, dur: 4.5 },
   { emoji: '🎊', top: '-3%', right: '25%', delay: 1.4, dur: 3.8 },
   { emoji: '🍒', bottom: '-3%', right: '16%', delay: 0.7, dur: 5 },
-  { emoji: '🩷', top: '50%', right: '-1%', delay: 0.2, dur: 4 },
-  { emoji: '🌺', bottom: '30%', right: '-2%', delay: 1.1, dur: 6 },
-  { emoji: '🫐', top: '24%', left: '-1%', delay: 0.6, dur: 5.5 },
+  { emoji: '🩷', top: '50%', right: '1%', delay: 0.2, dur: 4 },
+  { emoji: '🌺', bottom: '30%', right: '1%', delay: 1.1, dur: 6 },
+  { emoji: '🫐', top: '24%', left: '1%', delay: 0.6, dur: 5.5 },
 ];
 
 const containerVariants = {
@@ -90,7 +90,7 @@ export default function AcceptanceScreen({ startTime }: { startTime: number }) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="relative z-10 w-full max-w-2xl mx-auto px-6 py-12"
+      className="relative z-10 w-full max-w-2xl mx-auto px-3 sm:px-6 py-8"
     >
       {showConfetti && <Confetti />}
 

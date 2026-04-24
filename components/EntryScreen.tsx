@@ -21,12 +21,12 @@ interface DecorItem {
 const DECOR: DecorItem[] = [
   { emoji: '🍓', top: '-6%', left: '8%', delay: 0, dur: 4 },
   { emoji: '💖', top: '8%', right: '2%', delay: 0.5, dur: 5 },
-  { emoji: '🍑', bottom: '18%', left: '-1%', delay: 1, dur: 4.5 },
+  { emoji: '🍑', bottom: '18%', left: '1%', delay: 1, dur: 4.5 },
   { emoji: '✨', top: '-2%', right: '22%', delay: 1.5, dur: 3.5 },
   { emoji: '🍒', bottom: '-2%', right: '14%', delay: 0.8, dur: 5 },
-  { emoji: '🩷', top: '48%', right: '-2%', delay: 0.3, dur: 4 },
-  { emoji: '🌸', bottom: '28%', right: '-3%', delay: 1.2, dur: 6 },
-  { emoji: '🫐', top: '22%', left: '-2%', delay: 0.7, dur: 5.5 },
+  { emoji: '🩷', top: '48%', right: '1%', delay: 0.3, dur: 4 },
+  { emoji: '🌸', bottom: '28%', right: '1%', delay: 1.2, dur: 6 },
+  { emoji: '🫐', top: '22%', left: '1%', delay: 0.7, dur: 5.5 },
 ];
 
 const containerVariants = {
@@ -75,7 +75,7 @@ export default function EntryScreen({ onAccept }: EntryScreenProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="relative z-10 w-full max-w-2xl mx-auto px-6 py-12"
+      className="relative z-10 w-full max-w-2xl mx-auto px-3 sm:px-6 py-8"
     >
       {/* Decorative floating emojis */}
       {DECOR.map((d, i) => (

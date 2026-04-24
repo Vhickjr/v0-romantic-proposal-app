@@ -23,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable}`}>
-      <body className="font-inter antialiased" suppressHydrationWarning>
+    <html lang="en" className={`h-full ${syne.variable} ${inter.variable}`}>
+      <body className="font-inter antialiased h-full min-h-screen flex flex-col" suppressHydrationWarning>
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
