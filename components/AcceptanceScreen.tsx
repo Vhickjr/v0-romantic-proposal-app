@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, RotateCcw } from 'lucide-react';
 import Confetti from './Confetti';
 import RelationshipTimer from './RelationshipTimer';
 
@@ -21,51 +20,70 @@ const quotes = [
   "Status: Happily ever after IN PROGRESS",
 ];
 
-export default function AcceptanceScreen() {
+const resetJokes = [
+  'Reset? Please send Victor a mail first 😂',
+  'Oops! Only Victor can reset. Try calling him maybe? 😜',
+  'Resetting is a premium feature. Contact Victor! 😆',
+  'No reset for you! Ask Victor nicely. 😁',
+  "Reset? That's above your pay grade! 😂",
+  'Try again after sending Victor a pizza! 🍕😂',
+];
+
+interface DecorItem {
+  emoji: string;
+  top?: string;
+  bottom?: string;
+  left?: string;
+  right?: string;
+  delay: number;
+  dur: number;
+}
+
+const DECOR: DecorItem[] = [
+  { emoji: '🍓', top: '-5%', left: '10%', delay: 0, dur: 4 },
+  { emoji: '💖', top: '6%', right: '4%', delay: 0.4, dur: 5 },
+  { emoji: '🍑', bottom: '20%', left: '0%', delay: 0.9, dur: 4.5 },
+  { emoji: '🎊', top: '-3%', right: '25%', delay: 1.4, dur: 3.8 },
+  { emoji: '🍒', bottom: '-3%', right: '16%', delay: 0.7, dur: 5 },
+  { emoji: '🩷', top: '50%', right: '-1%', delay: 0.2, dur: 4 },
+  { emoji: '🌺', bottom: '30%', right: '-2%', delay: 1.1, dur: 6 },
+  { emoji: '🫐', top: '24%', left: '-1%', delay: 0.6, dur: 5.5 },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.18, delayChildren: 0.2 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
+};
+
+export default function AcceptanceScreen({ startTime }: { startTime: number }) {
   const [quote, setQuote] = useState('');
   const [showConfetti, setShowConfetti] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [showJoke, setShowJoke] = useState(false);
+  const [joke, setJoke] = useState('');
 
   useEffect(() => {
     setMounted(true);
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    setQuote(randomQuote);
-
-    // Stop confetti after 3 seconds
-    const timer = setTimeout(() => {
-      setShowConfetti(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
+    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+    const t = setTimeout(() => setShowConfetti(false), 4000);
+    return () => clearTimeout(t);
   }, []);
 
-  const handleReset = () => {
-    localStorage.removeItem('bemygirlfriend_accepted');
-    localStorage.removeItem('bemygirlfriend_timestamp');
-    window.location.reload();
+  const handleFakeReset = () => {
+    setJoke(resetJokes[Math.floor(Math.random() * resetJokes.length)]);
+    setShowJoke(true);
+    setTimeout(() => setShowJoke(false), 2800);
   };
 
   if (!mounted) return null;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: 'easeOut' },
-    },
-  };
 
   return (
     <motion.div
@@ -74,152 +92,170 @@ export default function AcceptanceScreen() {
       animate="visible"
       className="relative z-10 w-full max-w-2xl mx-auto px-6 py-12"
     >
-      {/* Confetti */}
       {showConfetti && <Confetti />}
 
-      {/* Main glass card */}
+      {/* Decorative floating emojis */}
+      {DECOR.map((d, i) => (
+        <motion.div
+          key={i}
+          animate={{ y: [0, -14, 0], rotate: [0, 8, -6, 0], scale: [1, 1.08, 1] }}
+          transition={{ duration: d.dur, delay: d.delay, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute text-2xl select-none pointer-events-none"
+          style={{ top: d.top, bottom: d.bottom, left: d.left, right: d.right }}
+        >
+          {d.emoji}
+        </motion.div>
+      ))}
+
+      {/* Animated gradient border → card */}
       <motion.div
         variants={itemVariants}
-        className="relative backdrop-blur-2xl bg-white/10 border border-white/20 rounded-3xl p-8 md:p-12 shadow-2xl overflow-hidden"
+        className="p-[2px] rounded-[2rem]"
+        style={{
+          background: 'linear-gradient(135deg, #FF6B8A, #FFD6E0, #FFB347, #DDD6FE, #FF9FAE, #FF6B8A)',
+          backgroundSize: '400% 400%',
+          animation: 'gradient-border 5s ease infinite',
+          boxShadow: '0 24px 80px rgba(255,107,138,0.2), 0 8px 32px rgba(255,179,71,0.12)',
+        }}
       >
-        {/* Animated glow background */}
-        <motion.div
-          animate={{
-            boxShadow: [
-              '0 0 40px rgba(220, 38, 38, 0.5)',
-              '0 0 80px rgba(244, 63, 94, 0.8)',
-              '0 0 40px rgba(220, 38, 38, 0.5)',
-            ],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-          }}
-          className="absolute inset-0 rounded-3xl"
-        />
+        <div className="bg-white/90 backdrop-blur-xl rounded-[calc(2rem-2px)] p-8 md:p-12">
+          <div className="space-y-8">
 
-        <div className="relative z-10 space-y-8">
-          {/* Success message with animated hearts */}
-          <motion.div
-            variants={itemVariants}
-            className="space-y-4 text-center"
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="text-6xl md:text-8xl font-bold"
-            >
-              <span className="bg-gradient-to-r from-red-200 via-rose-200 to-pink-200 bg-clip-text text-transparent">
-                ✓ Accepted
-              </span>
+            {/* Header */}
+            <motion.div variants={itemVariants} className="text-center space-y-4">
+              {/* Pulsing heart cluster */}
+              <motion.div
+                className="flex justify-center gap-2"
+                animate={{ scale: [1, 1.06, 1] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                {['💖', '❤️', '💖'].map((e, i) => (
+                  <motion.span
+                    key={i}
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 1.6, delay: i * 0.2, repeat: Infinity }}
+                    className="text-3xl"
+                  >
+                    {e}
+                  </motion.span>
+                ))}
+              </motion.div>
+
+              <div className="font-syne text-4xl md:text-5xl font-extrabold leading-tight">
+                <span
+                  style={{
+                    background: 'linear-gradient(90deg, #FF4D6D 0%, #FF6B8A 30%, #FFB347 60%, #C084FC 80%, #FF6B8A 100%)',
+                    backgroundSize: '200% auto',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    animation: 'shimmer-text 3.5s linear infinite',
+                    display: 'inline-block',
+                  }}
+                >
+                  Joan said YES! 💕
+                </span>
+              </div>
+
+              <p className="text-base md:text-lg font-inter font-light" style={{ color: '#9C6080' }}>
+                The best decision Joan ever made. 💌
+              </p>
+
+              {/* Joan & Victor badge */}
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full mx-auto"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,107,138,0.12), rgba(255,179,71,0.12))',
+                  border: '1.5px solid rgba(255,107,138,0.25)',
+                }}
+              >
+                <span className="font-syne font-bold text-sm" style={{ color: '#FF6B8A' }}>Joan</span>
+                <span className="text-base">💖</span>
+                <span className="font-syne font-bold text-sm" style={{ color: '#FFB347' }}>Victor</span>
+                <span className="text-base">✨</span>
+                <span className="font-inter text-xs font-medium" style={{ color: '#C084A0' }}>Forever</span>
+              </motion.div>
+
+              {/* Quote */}
+              <motion.div
+                variants={itemVariants}
+                className="rounded-2xl px-6 py-4 border"
+                style={{ background: 'rgba(255,240,245,0.6)', borderColor: '#FFD6E0' }}
+              >
+                <p className="text-sm md:text-base italic font-inter font-light" style={{ color: '#9C6080' }}>
+                  &ldquo;{quote}&rdquo;
+                </p>
+              </motion.div>
+            </motion.div>
+
+            {/* Relationship Timer */}
+            <motion.div variants={itemVariants}>
+              <RelationshipTimer startTime={startTime} />
+            </motion.div>
+
+            {/* Emoji row */}
+            <motion.div variants={itemVariants} className="flex justify-center gap-3">
+              {['🍓', '💖', '🍑', '🩷', '🍒', '💗', '🫐'].map((emoji, i) => (
+                <motion.span
+                  key={i}
+                  animate={{ y: [0, -14, 0], scale: [1, 1.15, 1] }}
+                  transition={{ duration: 2.5, delay: i * 0.15, repeat: Infinity }}
+                  className="text-xl select-none"
+                >
+                  {emoji}
+                </motion.span>
+              ))}
+            </motion.div>
+
+            {/* Fake reset */}
+            <motion.div variants={itemVariants} className="flex justify-center">
+              <motion.button
+                onClick={handleFakeReset}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                className="px-6 py-3 rounded-full font-inter text-sm font-medium border-2 transition-all duration-300"
+                style={{
+                  background: 'rgba(255,240,245,0.5)',
+                  borderColor: '#FFD6E0',
+                  color: '#9C6080',
+                }}
+              >
+                Reset (Just kidding, don&apos;t click this 😂)
+              </motion.button>
             </motion.div>
 
             <motion.p
               variants={itemVariants}
-              className="text-xl md:text-2xl text-red-100 font-light"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="text-center text-sm font-inter"
+              style={{ color: '#C084A0' }}
             >
-              This is now officially the best decision ever made. 💌
+              Forever starts now, Joan. Love you! 💕
             </motion.p>
-
-            {/* Quote */}
-            <motion.div
-              variants={itemVariants}
-              className="pt-4"
-            >
-              <p className="text-lg text-rose-200 italic font-light">
-                "{quote}"
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* Relationship Timer */}
-          <motion.div variants={itemVariants}>
-            <RelationshipTimer />
-          </motion.div>
-
-          {/* Floating hearts animation */}
-          <motion.div
-            variants={itemVariants}
-            className="flex justify-center gap-3 pt-4"
-          >
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.div
-                key={i}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.3, 1, 0.3],
-                }}
-                transition={{
-                  duration: 2.5,
-                  delay: i * 0.2,
-                  repeat: Infinity,
-                }}
-              >
-                <Heart className="w-8 h-8 text-red-300 fill-red-300" />
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Reset button */}
-          <motion.div
-            variants={itemVariants}
-            className="flex justify-center pt-6"
-          >
-            <motion.button
-              onClick={handleReset}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-medium rounded-full hover:bg-white/20 transition-all duration-300"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Reset (Just kidding, don&apos;t click this 😂)
-            </motion.button>
-          </motion.div>
-
-          {/* Decorative text */}
-          <motion.p
-            variants={itemVariants}
-            className="text-center text-red-200/70 text-sm pt-6"
-          >
-            Forever starts now. Love you! 💕
-          </motion.p>
+          </div>
         </div>
       </motion.div>
 
-      {/* Floating sparkles */}
-      {[0, 1, 2, 3, 4].map((i) => (
-        <motion.div
-          key={i}
-          initial={{
-            opacity: 0,
-            x: 0,
-            y: 0,
-          }}
-          animate={{
-            opacity: [0, 1, 0],
-            x: Math.cos((i / 5) * Math.PI * 2) * 120,
-            y: Math.sin((i / 5) * Math.PI * 2) * 120,
-          }}
-          transition={{
-            duration: 4,
-            delay: i * 0.4,
-            repeat: Infinity,
-          }}
-          className="absolute text-3xl"
-          style={{
-            left: '50%',
-            top: '50%',
-          }}
-        >
-          ✨
-        </motion.div>
-      ))}
+      {/* Joke popup */}
+      {showJoke && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="rounded-3xl px-8 py-12 text-2xl md:text-4xl font-extrabold text-center max-w-2xl mx-4 font-syne"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,107,138,0.95), rgba(255,179,71,0.95))',
+              border: '3px solid rgba(255,255,255,0.5)',
+              boxShadow: '0 24px 80px rgba(255,107,138,0.5)',
+              color: '#fff',
+            }}
+          >
+            {joke}
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }
