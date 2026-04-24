@@ -8,14 +8,6 @@ interface SparklesProps {
 }
 
 const SPARKLE_TYPES = ['✨', '🌟', '💫', '⭐', '✦', '🔆', '🌸', '💥'];
-const COLORS = [
-  'rgba(255,107,138,0.9)',
-  'rgba(255,179,71,0.9)',
-  'rgba(192,132,252,0.9)',
-  'rgba(52,211,153,0.9)',
-  'rgba(255,155,170,0.9)',
-  'rgba(255,200,100,0.9)',
-];
 
 export default function Sparkles({ count }: SparklesProps) {
   const [mounted, setMounted] = useState(false);
@@ -31,7 +23,6 @@ export default function Sparkles({ count }: SparklesProps) {
         duration: 1.8 + (i % 5) * 0.4,
         size: 12 + (i % 4) * 5,
         emoji: SPARKLE_TYPES[i % SPARKLE_TYPES.length],
-        color: COLORS[i % COLORS.length],
         rotateTo: i % 2 === 0 ? 180 : -180,
       })),
     [count]
@@ -61,7 +52,7 @@ export default function Sparkles({ count }: SparklesProps) {
             left: `${s.left}%`,
             top: `${s.top}%`,
             fontSize: s.size,
-            filter: `drop-shadow(0 0 4px ${s.color})`,
+            willChange: 'transform, opacity',
           }}
         >
           {s.emoji}
