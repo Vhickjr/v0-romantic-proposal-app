@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import EntryScreen from '@/components/EntryScreen';
 import AcceptanceScreen from '@/components/AcceptanceScreen';
 import FloatingHearts from '@/components/FloatingHearts';
@@ -22,9 +22,10 @@ const BUBBLE_CONFIGS = [
 export default function Home() {
   const [screen, setScreen]       = useState<'entry' | 'accepted'>('entry');
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [loading, setLoading]     = useState(true);
+  const [mounted, setMounted]     = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     fetch('/api/state')
       .then((r) => r.json())
       .then((data) => {
@@ -33,8 +34,7 @@ export default function Home() {
           setScreen('accepted');
         }
       })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
   const handleAccept = async () => {
@@ -79,49 +79,39 @@ export default function Home() {
           className="absolute bottom-[8%] -right-[6%] w-[38vw] h-[42vw] opacity-35 blur-[48px]"
           style={{ background: 'radial-gradient(circle at 40% 50%, #FECDD3, #FDA4AF)', animation: 'blob4-float 15s ease-in-out 6s infinite', willChange: 'transform' }}
         />
-        {BUBBLE_CONFIGS.map((b, i) => (
-          <motion.div
+        {mounted && BUBBLE_CONFIGS.map((b, i) => (
+          <div
             key={i}
-            initial={{ y: '100vh', opacity: 0 }}
-            animate={{ y: '-10vh', opacity: [0, 0.65, 0.5, 0.3, 0], scale: [0.8, 1, 1.08, 0.95, 0.8] }}
-            transition={{ duration: b.duration, delay: b.delay, repeat: Infinity, ease: 'easeOut' }}
             className="absolute rounded-full"
-            style={{ left: b.left, width: b.size, height: b.size, background: b.color, backdropFilter: 'blur(3px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8)' }}
+            style={{
+              left: b.left,
+              width: b.size,
+              height: b.size,
+              background: b.color,
+              backdropFilter: 'blur(3px)',
+              border: '1px solid rgba(255,255,255,0.6)',
+              boxShadow: 'inset 0 1px 3px rgba(255,255,255,0.8)',
+              animation: `bubble-rise ${b.duration}s ${b.delay}s ease-out infinite`,
+              willChange: 'transform, opacity',
+            }}
           />
         ))}
       </div>
 
       {/* ── Floating particles — z-20 so they drift over the card ── */}
-      <FloatingHearts count={18} />
-      <Sparkles count={28} />
-      {screen === 'accepted' && !loading && <FloatingPhotos />}
+      <FloatingHearts count={10} />
+      <Sparkles count={14} />
+      {screen === 'accepted' && <FloatingPhotos />}
 
       {/* ── Centred content column ── */}
       <div className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center py-8">
-        <AnimatePresence>
-          {loading && (
-            <motion.div
-              key="loader"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: [0.9, 1.1, 0.9] }}
-              exit={{ opacity: 0, scale: 0.7 }}
-              transition={{ scale: { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } }}
-              className="text-5xl select-none"
-            >
-              💖
-            </motion.div>
+        <AnimatePresence mode="wait">
+          {screen === 'entry' ? (
+            <EntryScreen key="entry" onAccept={handleAccept} />
+          ) : (
+            <AcceptanceScreen key="accepted" startTime={startTime!} />
           )}
         </AnimatePresence>
-
-        {!loading && (
-          <AnimatePresence mode="wait">
-            {screen === 'entry' ? (
-              <EntryScreen key="entry" onAccept={handleAccept} />
-            ) : (
-              <AcceptanceScreen key="accepted" startTime={startTime!} />
-            )}
-          </AnimatePresence>
-        )}
       </div>
     </main>
   );
