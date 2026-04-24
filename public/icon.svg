@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Love heart icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a0011"/>
+      <stop offset="100%" stop-color="#490019"/>
+    </linearGradient>
+    <linearGradient id="heart" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff8fab"/>
+      <stop offset="100%" stop-color="#ff1f5a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <path
+    d="M64 106c-2.5 0-5-0.8-7-2.6C37 84.8 22 72.1 22 53.7 22 41 31.8 31 44.2 31c7.4 0 14.4 3.3 18.8 9 4.4-5.7 11.4-9 18.8-9C94.2 31 104 41 104 53.7c0 18.4-15 31.1-35 49.7-2 1.8-4.5 2.6-7 2.6z"
+    fill="url(#heart)"
+  />
+
+  <circle cx="47" cy="45" r="5" fill="#ffd4de" opacity="0.9"/>
+  <circle cx="58" cy="38" r="2.8" fill="#ffe7ed" opacity="0.9"/>
+</svg>
